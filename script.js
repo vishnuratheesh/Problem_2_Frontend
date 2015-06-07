@@ -251,7 +251,13 @@ myTicketingApp.controller('ViewTicketController', function($scope, getTickets, m
     modalService.showModal(modalDefaults, modalOptions).then(function(result) {
 
       if (result.newStatus.id == 1 && result.newCSR.id > 1) {
-        alert('Cannot set ticket to NEW with CSR asigned to it.');
+        alert('Cannot set ticket to NEW with a CSR asigned to it.');
+        return;
+      } else if (result.newStatus.id == 3 && result.newCSR.id == 1) {
+        alert('Cannot set ticket to CLOSE without a CSR asigned.');
+        return;
+      } else if (result.newStatus.id == 2 && result.newCSR.id == 1) {
+        alert('Cannot set ticket to OPEN without a CSR asigned.');
         return;
       }
 
