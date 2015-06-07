@@ -267,7 +267,7 @@ myTicketingApp.controller('ViewTicketController', function($scope, getTickets, m
       newData.cust_id = result.cust_id;
       newData.prob_id = result.prob_id;
       newData.status_id = result.newStatus.id;
-      newData.comments = result.newComments;
+      newData.comments = result.newComments.trim();
       newData.assigned_to = result.newCSR.id;
 
       updateTicket.getJson(newData).then(function(data) {
@@ -303,12 +303,17 @@ myTicketingApp.controller('ViewTicketController', function($scope, getTickets, m
 
     modalService.showModal(modalDefaults, modalOptions).then(function(result) {
 
-      // cust_id,prob_id,status_id,comments
+
+      if (typeof result.newCustomer === "undefined" || typeof result.newProbType === "undefined" || typeof result.newComments === "undefined") {
+        alert('All three fields are mandatory.');
+      }
+
+      cust_id, prob_id, status_id, comments
       var newData = {};
       newData.cust_id = result.newCustomer.id;
       newData.prob_id = result.newProbType.id;
       newData.status_id = 1;
-      newData.comments = result.newComments;
+      newData.comments = result.newComments.trim();
       newData.assigned_to = 1;
 
       createTicket.getJson(newData).then(function(data) {
