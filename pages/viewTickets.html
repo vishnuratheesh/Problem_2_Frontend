@@ -1,7 +1,9 @@
 <div>
   <br><br>
-  <h3 class="text-center">View Tickets</h3>
+  <h3 class="text-center">My Tickets</h3>
   <p class="text-center">{{ message }}</p>
+
+  <a ng-click="showCreateTicket()" style="float:right;margin-right:12%;font-size: 2rem;cursor: pointer;"><i class="fa fa-plus-square"></i> Create New Ticket</a>
 
 <table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped" style="margin-top:8rem;margin-left: 8%;width:80%">
       <thead>
@@ -20,7 +22,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr ng-repeat="row in displayedCollection" style="cursor: pointer; font-size: 1.5rem; ">
+      <tr ng-repeat="row in displayedCollection" style="font-size: 1.5rem; ">
         <td>{{row.id}}</td>
         <td>{{row.cust_id}}</td>
         <td>{{row.name}}</td>
@@ -28,7 +30,10 @@
         <td>{{row.comments}}</td>
         <td>{{row.problem_type}}</td>
         <td>{{row.csr_name}} - <b>{{row.level}}</b></td>
-        <td>{{row.status}} &nbsp; <a ng-click="show(row)"><i class="fa fa-pencil-square-o"></i></a>
+        <td>{{row.status}} &nbsp;
+          <a ng-click="show(row)" style="float:right;" style="cursor: pointer; font-size: 2.5rem; ">
+            <i class="fa fa-pencil-square-o" ng-show="row.status_id<3" style="cursor: pointer; font-size: 2rem; "></i>
+            <i class="fa fa-eye" ng-show="row.status_id==3" style="cursor: pointer; font-size: 2rem; "></i></a>
         </td>
       </tr>
       </tbody>

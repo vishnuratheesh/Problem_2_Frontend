@@ -66,6 +66,22 @@ myTicketingApp.factory('updateTicket', function($http) {
   }
 });
 
+myTicketingApp.factory('createTicket', function($http) {
+  return {
+    getJson: function(newData) {
+      var url = apiBaseURL + '/tickets';
+      var promise = $http.post(url, newData, {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        }
+      });
+      return promise.then(function(result) {
+        return result.data;
+      });
+    }
+  }
+});
+
 
 myTicketingApp.factory('getCSRs', function($http) {
   return {
@@ -103,6 +119,18 @@ myTicketingApp.factory('getCustomers', function($http) {
   }
 });
 
+myTicketingApp.factory('getProblemTypes', function($http) {
+  return {
+    getJson: function() {
+      var url = apiBaseURL + '/probtypes';
+      var promise = $http.get(url);
+      return promise.then(function(result) {
+        return result.data;
+      });
+    }
+  }
+});
+
 
 
 myTicketingApp.service('modalService', ['$modal',
@@ -112,7 +140,7 @@ myTicketingApp.service('modalService', ['$modal',
       backdrop: true,
       keyboard: true,
       modalFade: true,
-      templateUrl: '/pages/modal.html'
+      templateUrl: 'modal.html'
     };
 
     var modalOptions = {
@@ -170,7 +198,7 @@ myTicketingApp.controller('MainController', function($scope, $location) {
 });
 
 // create the controller and inject Angular's $scope
-myTicketingApp.controller('ViewTicketController', function($scope, getTickets, modalService, getCSRs, getStatus, getCustomers, updateTicket) {
+myTicketingApp.controller('ViewTicketController', function($scope, getTickets, modalService, getCSRs, getStatus, getCustomers, getProblemTypes, updateTicket, createTicket) {
 
   // create a message to display in our view
   $scope.message = 'Tip: Use global search to narrow down results.';
@@ -196,7 +224,11 @@ myTicketingApp.controller('ViewTicketController', function($scope, getTickets, m
     $scope.customersCollection = data.data;
   });
 
+  getProblemTypes.getJson().then(function(data) {
+    $scope.probtypesCollection = data.data;
+  });
 
+  // UPDATE TICKET - MODAL
   $scope.show = function(row) {
     var modalOptions = {
       closeButtonText: 'Cancel',
@@ -208,7 +240,20 @@ myTicketingApp.controller('ViewTicketController', function($scope, getTickets, m
       status: $scope.statusCollection
     };
 
-    modalService.showModal({}, modalOptions).then(function(result) {
+
+    var modalDefaults = {
+      backdrop: true,
+      keyboard: true,
+      modalFade: true,
+      templateUrl: '/pages/modal.html'
+    };
+
+    modalService.showModal(modalDefaults, modalOptions).then(function(result) {
+
+      if (result.newStatus.id == 1 && result.newCSR.id > 1) {
+        alert('Cannot set ticket to NEW with CSR asigned to it.');
+        return;
+      }
 
       //tticketID,cust_id,prob_id,status_id,comments,assigned_to
       var newData = {};
@@ -230,6 +275,49 @@ myTicketingApp.controller('ViewTicketController', function($scope, getTickets, m
     });
 
   };
+
+  // CREATE TICKET - MODAL
+  $scope.showCreateTicket = function() {
+    var modalOptions = {
+      closeButtonText: 'Cancel',
+      actionButtonText: 'Create',
+      headerText: 'New Ticket',
+      // bodyText: 'Here are the ticket details.',
+      customers: $scope.customersCollection,
+      probtypes: $scope.probtypesCollection
+    };
+
+
+    var modalDefaults = {
+      backdrop: true,
+      keyboard: true,
+      modalFade: true,
+      templateUrl: '/pages/createTicketModal.html'
+    };
+
+    modalService.showModal(modalDefaults, modalOptions).then(function(result) {
+
+      // cust_id,prob_id,status_id,comments
+      var newData = {};
+      newData.cust_id = result.newCustomer.id;
+      newData.prob_id = result.newProbType.id;
+      newData.status_id = 1;
+      newData.comments = result.newComments;
+      newData.assigned_to = 1;
+
+      createTicket.getJson(newData).then(function(data) {
+        getTickets.getJson().then(function(data) {
+          $scope.rowCollection = data.data;
+          $scope.displayedCollection = [].concat($scope.rowCollection);
+        });
+      });
+
+    });
+
+  };
+
+
+
 
 
 });
