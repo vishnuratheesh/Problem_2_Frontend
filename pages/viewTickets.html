@@ -1,4 +1,37 @@
-<div class="jumbotron text-center">
-  <h1>View Tickets</h1>
-  <p>{{ message }}</p>
+<div>
+  <br><br>
+  <h3 class="text-center">View Tickets</h3>
+  <p class="text-center">{{ message }}</p>
+
+<table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped" style="margin-top:8rem;margin-left: 8%;width:80%">
+      <thead>
+      <tr style="cursor: pointer; font-size: 2rem; ">
+        <th st-sort="id">Ticket ID</th>
+        <th st-sort="id">Customer ID</th>
+        <th st-sort="id">Customer Name</th>
+        <th st-sort="id">Mobile No.</th>
+        <th st-sort="id">Comments</th>
+        <th st-sort="id">Problem Type</th>
+        <th st-sort="id">Assigned To</th>
+        <th st-sort="id">Status</th>
+      </tr>
+      <tr>
+        <th colspan="5"><input st-search="" class="form-control" placeholder="global search ..." type="text"/></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="row in displayedCollection" style="cursor: pointer; font-size: 1.5rem; ">
+        <td>{{row.id}}</td>
+        <td>{{row.cust_id}}</td>
+        <td>{{row.name}}</td>
+        <td>{{row.mobile}}</td>
+        <td>{{row.comments}}</td>
+        <td>{{row.problem_type}}</td>
+        <td>{{row.csr_name}} - <b>{{row.level}}</b></td>
+        <td>{{row.status}} &nbsp; <a ng-click="show()"><i class="fa fa-pencil-square-o"></i></a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
 </div>
