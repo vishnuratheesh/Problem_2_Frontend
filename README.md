@@ -35,7 +35,7 @@
 
 	Feel free to implement any improvement you see fit for this application.####Solution
 
-  ####Solution
+####Solution
 
 Overview:
 
