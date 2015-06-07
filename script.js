@@ -50,6 +50,60 @@ myTicketingApp.factory('getTickets', function($http) {
   }
 });
 
+myTicketingApp.factory('updateTicket', function($http) {
+  return {
+    getJson: function(newData) {
+      var url = apiBaseURL + '/tickets/';
+      var promise = $http.put(url, newData, {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        }
+      });
+      return promise.then(function(result) {
+        return result.data;
+      });
+    }
+  }
+});
+
+
+myTicketingApp.factory('getCSRs', function($http) {
+  return {
+    getJson: function() {
+      var url = apiBaseURL + '/csrs';
+      var promise = $http.get(url);
+      return promise.then(function(result) {
+        return result.data;
+      });
+    }
+  }
+});
+
+myTicketingApp.factory('getStatus', function($http) {
+  return {
+    getJson: function() {
+      var url = apiBaseURL + '/status';
+      var promise = $http.get(url);
+      return promise.then(function(result) {
+        return result.data;
+      });
+    }
+  }
+});
+
+myTicketingApp.factory('getCustomers', function($http) {
+  return {
+    getJson: function() {
+      var url = apiBaseURL + '/customers';
+      var promise = $http.get(url);
+      return promise.then(function(result) {
+        return result.data;
+      });
+    }
+  }
+});
+
+
 
 myTicketingApp.service('modalService', ['$modal',
   function($modal) {
@@ -116,69 +170,62 @@ myTicketingApp.controller('MainController', function($scope, $location) {
 });
 
 // create the controller and inject Angular's $scope
-myTicketingApp.controller('ViewTicketController', function($scope, getTickets, modalService) {
+myTicketingApp.controller('ViewTicketController', function($scope, getTickets, modalService, getCSRs, getStatus, getCustomers, updateTicket) {
 
   // create a message to display in our view
-  $scope.message = 'Use global search to narrow down results.';
+  $scope.message = 'Tip: Use global search to narrow down results.';
 
-  // $scope.rowCollection = [];
-
-  // getTickets.getJson().then(function(data) {
-  //   $scope.rowCollection = data;
-  //   $scope.displayedCollection = $scope.rowCollection;
-  // });
-
-  var firstnames = ['Laurent', 'Blandine', 'Olivier', 'Max'];
-  var lastnames = ['Renard', 'Faivre', 'Frere', 'Eponge'];
-  var dates = ['1987-05-21', '1987-04-25', '1955-08-27', '1966-06-06'];
-  var id = 1;
-
-  function generateRandomItem(id) {
-
-    var firstname = firstnames[Math.floor(Math.random() * 3)];
-    var lastname = lastnames[Math.floor(Math.random() * 3)];
-    var birthdate = dates[Math.floor(Math.random() * 3)];
-    var balance = Math.floor(Math.random() * 2000);
-
-    return {
-      id: id
-    }
-  }
 
   $scope.rowCollection = [];
 
   getTickets.getJson().then(function(data) {
-    // for (id; id < 5; id++) {
-    //   $scope.rowCollection.push(generateRandomItem(id));
-    // }
     $scope.rowCollection = data.data;
     //copy the references (you could clone ie angular.copy but then have to go through a dirty checking for the matches)
     $scope.displayedCollection = [].concat($scope.rowCollection);
+  });
 
+  getCSRs.getJson().then(function(data) {
+    $scope.csrCollection = data.data;
+  });
+
+  getStatus.getJson().then(function(data) {
+    $scope.statusCollection = data.data;
+  });
+
+  getCustomers.getJson().then(function(data) {
+    $scope.customersCollection = data.data;
   });
 
 
-  $scope.show = function() {
+  $scope.show = function(row) {
     var modalOptions = {
       closeButtonText: 'Cancel',
-      actionButtonText: 'Delete Customer',
-      headerText: 'Delete ?',
-      bodyText: 'Are you sure you want to delete this customer?'
+      actionButtonText: 'Save',
+      headerText: 'Ticket Details',
+      // bodyText: 'Here are the ticket details.',
+      rowData: row,
+      csrs: $scope.csrCollection,
+      status: $scope.statusCollection
     };
 
     modalService.showModal({}, modalOptions).then(function(result) {
-      // dataService.deleteCustomer($scope.customer.id).then(function() {
-      //   $location.path('/customers');
-      // }, processError);
-      getTickets.getJson().then(function(data) {
-        // for (id; id < 5; id++) {
-        //   $scope.rowCollection.push(generateRandomItem(id));
-        // }
-        $scope.rowCollection = data.data;
-        //copy the references (you could clone ie angular.copy but then have to go through a dirty checking for the matches)
-        $scope.displayedCollection = [].concat($scope.rowCollection);
 
+      //tticketID,cust_id,prob_id,status_id,comments,assigned_to
+      var newData = {};
+      newData.id = result.id;
+      newData.cust_id = result.cust_id;
+      newData.prob_id = result.prob_id;
+      newData.status_id = result.newStatus.id;
+      newData.comments = result.newComments;
+      newData.assigned_to = result.newCSR.id;
+
+      updateTicket.getJson(newData).then(function(data) {
+        getTickets.getJson().then(function(data) {
+          $scope.rowCollection = data.data;
+          $scope.displayedCollection = [].concat($scope.rowCollection);
+        });
       });
+
 
     });
 

@@ -2,11 +2,38 @@
   <h3>{{modalOptions.headerText}}</h3>
 </div>
 <div class="modal-body">
-  <p>{{modalOptions.bodyText}}</p>
+  <!-- <p>{{modalOptions.bodyText}}</p> -->
+  <p><b>Ticket ID: </b> {{modalOptions.rowData.id}}</p><br>
+  <p><b>Customer ID: </b> {{modalOptions.rowData.cust_id}} &nbsp;&nbsp;<b>Customer Name: </b> {{modalOptions.rowData.name}}</p>
+  <p><b>Mobile: </b> {{modalOptions.rowData.mobile}}</p><br>
+  <p><b>Comments </b><br>
+    <textarea style="height: 8rem;width: 30rem;" 
+        ng-init="modalOptions.rowData.newComments = modalOptions.rowData.comments" 
+        ng-change="modalOptions.rowData.newComments = modalOptions.rowData.newComments"
+        ng-model="modalOptions.rowData.newComments"
+        ng-disabled='modalOptions.rowData.newStatus.id == 3'>
+    </textarea>
+  </p><br>
+  <p><b>Assigned To: </b> 
+  <select 
+      ng-init="modalOptions.rowData.newCSR = {id: modalOptions.rowData.assigned_to}" 
+      ng-change="modalOptions.rowData.newCSR = {id: modalOptions.rowData.newCSR}"
+      ng-model="modalOptions.rowData.newCSR"
+      ng-options='csr.id as (csr.name + " - "+csr.level) for csr in modalOptions.csrs track by csr.id'
+      ng-disabled='modalOptions.rowData.newStatus.id == 3'>
+  </select>
+  &nbsp;&nbsp;<b>Status: </b>
+  <select 
+      ng-init="modalOptions.rowData.newStatus = {id: modalOptions.rowData.status_id}" 
+      ng-change="modalOptions.rowData.newStatus = {id: modalOptions.rowData.newStatus}"
+      ng-model="modalOptions.rowData.newStatus"
+      ng-options='status.id as status.status for status in modalOptions.status track by status.id'
+      ng-disabled='modalOptions.rowData.newStatus.id == 3'>
+  </select></p>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn" 
           data-ng-click="modalOptions.close()">{{modalOptions.closeButtonText}}</button>
   <button class="btn btn-primary" 
-          data-ng-click="modalOptions.ok();">{{modalOptions.actionButtonText}}</button>
+          data-ng-click="modalOptions.ok(modalOptions.rowData, newCSR);">{{modalOptions.actionButtonText}}</button>
 </div>
