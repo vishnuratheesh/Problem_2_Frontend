@@ -20,18 +20,6 @@ myTicketingApp.config(function($routeProvider) {
   .when('/viewTickets', {
     templateUrl: 'pages/viewTickets.html',
     controller: 'ViewTicketController'
-  })
-
-  // route for the create ticket page
-  .when('/createTicket', {
-    templateUrl: 'pages/createTicket.html',
-    controller: 'CreateTicketController'
-  })
-
-  // route for the assign ticket page
-  .when('/assignTickets', {
-    templateUrl: 'pages/assignTickets.html',
-    controller: 'AssignTicketsController'
   });
 });
 
@@ -245,7 +233,7 @@ myTicketingApp.controller('ViewTicketController', function($scope, getTickets, m
       backdrop: true,
       keyboard: true,
       modalFade: true,
-      templateUrl: '/pages/modal.html'
+      templateUrl: '/pages/updateTicketsModal.html'
     };
 
     modalService.showModal(modalDefaults, modalOptions).then(function(result) {
