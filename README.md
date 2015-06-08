@@ -41,17 +41,15 @@ Overview:
 
 - UI: AngularJS + Angular UI Bootstrap
 
-- Areas to 
+- Functionalities: 
 	- Create a ticket 	
 	- View ticket
 	- Assign/Update ticket
 	- Close a ticket.
-	- Closed tickets can't be modified.
+	- Closed tickets can't be modified - only viewd.
 	
 - Easy to find tickets with global search.
 
 - Hosted on Heroku: [https://prob2frontend.herokuapp.com](https://prob2frontend.herokuapp.com)
  
-
-
-- Front-End Repo: 
+- Back-End Repo: [https://github.com/vishnuratheesh/Problem_2_Backend](https://github.com/vishnuratheesh/Problem_2_Backend)
